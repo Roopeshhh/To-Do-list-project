@@ -3,16 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>To-Do List</title>
-  </head>
-  <body>
-    <h1 class="todo-container">My To-Do App</h1>
-    <form id="todo-form" action="#">
-      <input id="todo-input" type="text" placeholder="Enter a task..." />
-      <button type="button">Add</button>
-    </form>
 
-    <h3>Todo List</h3>
-    <ul id="list-items"></ul>
+    <title>Todo App</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <main class="todo-container">
+      <h1>My Todo App</h1>
+
+      <form id="todo-form">
+        <input
+          id="todo-input"
+          type="text"
+          placeholder="Enter a task..."
+          autocomplete="off"
+        />
+
+        <button type="submit">Add</button>
+      </form>
+
+      <section class="todo-section">
+        <h2>Todo List</h2>
+
+        <div class="todo-controls">
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Search tasks..."
+          />
+
+          <button type="button" data-filter="all">All</button>
+          <button type="button" data-filter="active">Active</button>
+          <button type="button" data-filter="completed">Completed</button>
+        </div>
+
+        <ul id="todo-list"></ul>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
   </body>
 </html>
