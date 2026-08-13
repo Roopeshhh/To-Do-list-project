@@ -1,0 +1,43 @@
+/* Basic browser reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.todo-container {
+  width: 90%;
+  max-width: 500px;
+  padding: 30px;
+  background: rgb(255, 255, 255);
+  border-radius: 10px;
+}
+#todo-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#todo-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#todo-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
