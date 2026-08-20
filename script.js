@@ -12,10 +12,16 @@ todoForm.addEventListener("submit", function (event) {
 
   const task = todoInput.value.trim();
 
-  if (task === "") {
+  if (!validateTodoText(task)) {
     return;
   }
 
+  addTodo(task);
+
+  todoInput.value = "";
+});
+
+function addTodo(task) {
   const todo = {
     id: Date.now(),
     text: task,
@@ -26,12 +32,62 @@ todoForm.addEventListener("submit", function (event) {
 
   saveTodos();
   renderTodos();
+}
 
-  todoInput.value = "";
-});
+function toggleTodo(id, completed) {
+  const todo = todos.find(function (item) {
+    return item.id === id;
+  });
+
+  if (!todo) {
+    return;
+  }
+
+  todo.completed = completed;
+
+  saveTodos();
+  renderTodos();
+}
+
+function updateTodo(id, text) {
+  const todo = todos.find(function (item) {
+    return item.id === id;
+  });
+
+  if (!todo) {
+    return;
+  }
+
+  todo.text = text;
+
+  saveTodos();
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  todos = todos.filter(function (item) {
+    return item.id !== id;
+  });
+
+  saveTodos();
+  renderTodos();
+}
 
 function saveTodos() {
   localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function validateTodoText(text) {
+  if (text === "") {
+    return false;
+  }
+
+  if (text.length > 100) {
+    alert("Todo cannot be longer than 100 characters.");
+    return false;
+  }
+
+  return true;
 }
 
 function renderTodos() {
@@ -65,10 +121,7 @@ function createTodoElement(todo) {
   todoCheckbox.checked = todo.completed;
 
   todoCheckbox.addEventListener("change", function () {
-    todo.completed = todoCheckbox.checked;
-
-    saveTodos();
-    renderTodos();
+    toggleTodo(todo.id, todoCheckbox.checked);
   });
 
   const todoText = document.createElement("span");
@@ -91,14 +144,11 @@ function createTodoElement(todo) {
 
     const trimmedTask = updatedTask.trim();
 
-    if (trimmedTask === "") {
+    if (!validateTodoText(trimmedTask)) {
       return;
     }
 
-    todo.text = trimmedTask;
-
-    saveTodos();
-    renderTodos();
+    updateTodo(todo.id, trimmedTask);
   });
 
   const deleteButton = document.createElement("button");
@@ -106,12 +156,7 @@ function createTodoElement(todo) {
   deleteButton.textContent = "Delete";
 
   deleteButton.addEventListener("click", function () {
-    todos = todos.filter(function (item) {
-      return item.id !== todo.id;
-    });
-
-    saveTodos();
-    renderTodos();
+    deleteTodo(todo.id);
   });
 
   todoItem.append(todoCheckbox, todoText, editButton, deleteButton);
