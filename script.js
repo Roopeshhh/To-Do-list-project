@@ -23,6 +23,7 @@ todoForm.addEventListener("submit", function (event) {
   };
 
   todos.push(todo);
+
   saveTodos();
   renderTodos();
 
@@ -50,60 +51,72 @@ function renderTodos() {
   });
 
   filteredTodos.forEach(function (todo) {
-    const todoItem = document.createElement("li");
+    const todoElement = createTodoElement(todo);
 
-    const todoText = document.createElement("span");
-    todoText.textContent = todo.text;
+    todoList.appendChild(todoElement);
+  });
+}
 
-    if (todo.completed) {
-      todoText.classList.add("completed");
+function createTodoElement(todo) {
+  const todoItem = document.createElement("li");
+
+  const todoCheckbox = document.createElement("input");
+  todoCheckbox.type = "checkbox";
+  todoCheckbox.checked = todo.completed;
+
+  todoCheckbox.addEventListener("change", function () {
+    todo.completed = todoCheckbox.checked;
+
+    saveTodos();
+    renderTodos();
+  });
+
+  const todoText = document.createElement("span");
+  todoText.textContent = todo.text;
+
+  if (todo.completed) {
+    todoText.classList.add("completed");
+  }
+
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.textContent = "Edit";
+
+  editButton.addEventListener("click", function () {
+    const updatedTask = prompt("Edit your task:", todo.text);
+
+    if (updatedTask === null) {
+      return;
     }
 
-    todoText.addEventListener("click", function () {
-      todo.completed = !todo.completed;
-      saveTodos();
-      renderTodos();
-    });
+    const trimmedTask = updatedTask.trim();
 
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.textContent = "Delete";
+    if (trimmedTask === "") {
+      return;
+    }
 
-    deleteButton.addEventListener("click", function () {
-      todos = todos.filter(function (item) {
-        return item.id !== todo.id;
-      });
+    todo.text = trimmedTask;
 
-      saveTodos();
-      renderTodos();
-    });
-
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.textContent = "Edit";
-
-    editButton.addEventListener("click", function () {
-      const updatedTask = prompt("Edit your task:", todo.text);
-
-      if (updatedTask === null) {
-        return;
-      }
-
-      const trimmedTask = updatedTask.trim();
-
-      if (trimmedTask === "") {
-        return;
-      }
-
-      todo.text = trimmedTask;
-
-      saveTodos();
-      renderTodos();
-    });
-
-    todoItem.append(todoText, editButton, deleteButton);
-    todoList.appendChild(todoItem);
+    saveTodos();
+    renderTodos();
   });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.textContent = "Delete";
+
+  deleteButton.addEventListener("click", function () {
+    todos = todos.filter(function (item) {
+      return item.id !== todo.id;
+    });
+
+    saveTodos();
+    renderTodos();
+  });
+
+  todoItem.append(todoCheckbox, todoText, editButton, deleteButton);
+
+  return todoItem;
 }
 
 searchInput.addEventListener("input", function () {
@@ -113,6 +126,7 @@ searchInput.addEventListener("input", function () {
 filterButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     currentFilter = button.dataset.filter;
+
     renderTodos();
   });
 });
