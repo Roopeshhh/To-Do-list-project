@@ -5,6 +5,7 @@ const todoCount = document.getElementById("todo-count");
 const searchInput = document.getElementById("search-input");
 const filterButtons = document.querySelectorAll("[data-filter]");
 const clearCompletedButton = document.getElementById("clear-completed");
+const clearAllButton = document.getElementById("clear-all");
 
 let todos = JSON.parse(localStorage.getItem("todos")) || [];
 let currentFilter = "all";
@@ -32,8 +33,7 @@ function addTodo(task) {
 
   todos.push(todo);
 
-  saveTodos();
-  renderTodos();
+  refreshTodos();
 }
 
 function toggleTodo(id, completed) {
@@ -47,8 +47,7 @@ function toggleTodo(id, completed) {
 
   todo.completed = completed;
 
-  saveTodos();
-  renderTodos();
+  refreshTodos();
 }
 
 function updateTodo(id, text) {
@@ -62,8 +61,7 @@ function updateTodo(id, text) {
 
   todo.text = text;
 
-  saveTodos();
-  renderTodos();
+  refreshTodos();
 }
 
 function deleteTodo(id) {
@@ -71,12 +69,16 @@ function deleteTodo(id) {
     return item.id !== id;
   });
 
-  saveTodos();
-  renderTodos();
+  refreshTodos();
 }
 
 function saveTodos() {
   localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function refreshTodos() {
+  saveTodos();
+  renderTodos();
 }
 
 function validateTodoText(text) {
@@ -231,8 +233,23 @@ clearCompletedButton.addEventListener("click", function () {
     return !todo.completed;
   });
 
-  saveTodos();
-  renderTodos();
+  refreshTodos();
+});
+
+clearAllButton.addEventListener("click", function () {
+  if (todos.length === 0) {
+    return;
+  }
+
+  const confirmed = confirm("Are you sure you want to delete all tasks?");
+
+  if (!confirmed) {
+    return;
+  }
+
+  todos = [];
+
+  refreshTodos();
 });
 
 renderTodos();
