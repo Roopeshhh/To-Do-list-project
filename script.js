@@ -1,8 +1,10 @@
 const todoForm = document.getElementById("todo-form");
 const todoInput = document.getElementById("todo-input");
 const todoList = document.getElementById("todo-list");
+const todoCount = document.getElementById("todo-count");
 const searchInput = document.getElementById("search-input");
 const filterButtons = document.querySelectorAll("[data-filter]");
+const clearCompletedButton = document.getElementById("clear-completed");
 
 let todos = JSON.parse(localStorage.getItem("todos")) || [];
 let currentFilter = "all";
@@ -90,6 +92,16 @@ function validateTodoText(text) {
   return true;
 }
 
+function updateTodoCount() {
+  const activeTodos = todos.filter(function (todo) {
+    return !todo.completed;
+  });
+
+  const itemText = activeTodos.length === 1 ? "item" : "items";
+
+  todoCount.textContent = `${activeTodos.length} ${itemText} left`;
+}
+
 function renderTodos() {
   todoList.innerHTML = "";
 
@@ -111,6 +123,22 @@ function renderTodos() {
 
     todoList.appendChild(todoElement);
   });
+
+  if (filteredTodos.length === 0) {
+    const emptyMessage = document.createElement("li");
+
+    if (todos.length === 0) {
+      emptyMessage.textContent = "No tasks yet. Add your first task!";
+    } else {
+      emptyMessage.textContent = "No tasks found.";
+    }
+
+    emptyMessage.classList.add("empty-message");
+
+    todoList.appendChild(emptyMessage);
+  }
+
+  updateTodoCount();
 }
 
 function createTodoElement(todo) {
@@ -156,6 +184,12 @@ function createTodoElement(todo) {
   deleteButton.textContent = "Delete";
 
   deleteButton.addEventListener("click", function () {
+    const confirmed = confirm(`Delete "${todo.text}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+
     deleteTodo(todo.id);
   });
 
@@ -174,6 +208,31 @@ filterButtons.forEach(function (button) {
 
     renderTodos();
   });
+});
+
+clearCompletedButton.addEventListener("click", function () {
+  const completedTodos = todos.filter(function (todo) {
+    return todo.completed;
+  });
+
+  if (completedTodos.length === 0) {
+    return;
+  }
+
+  const confirmed = confirm(
+    "Are you sure you want to clear all completed tasks?",
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  todos = todos.filter(function (todo) {
+    return !todo.completed;
+  });
+
+  saveTodos();
+  renderTodos();
 });
 
 renderTodos();
